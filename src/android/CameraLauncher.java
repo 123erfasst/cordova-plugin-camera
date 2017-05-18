@@ -65,6 +65,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.util.Log;
 
 /**
  * This class launches the camera view, allows the user to take a picture, closes the camera view,
@@ -601,6 +602,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         String imageFileName = "IMG_" + timeStamp + (this.encodingType == JPEG ? ".jpg" : ".png");
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
+        if (!storageDir.exists() && !storageDir.mkdir()) {
+            Log.e(LOG_TAG, "Error creating directory: " + storageDir.toURI().toASCIIString());
+        }
         String galleryPath = storageDir.getAbsolutePath() + "/" + imageFileName;
         return galleryPath;
     }
