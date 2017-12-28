@@ -286,7 +286,11 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     public void takePicture(int returnType, int encodingType)
     {
         // Save the number of images currently on disk for later
-        this.numPics = queryImgDB(whichContentStore()).getCount();
+        try {
+            this.numPics = queryImgDB(whichContentStore()).getCount();
+        } catch(Exception ex) {
+            this.numPics = 0;
+        }
 
         // Let's use the intent and see what happens
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -526,7 +530,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             this.processPicture(bitmap, this.encodingType);
 
             if (!this.saveToPhotoAlbum) {
-                checkForDuplicateImage(DATA_URL);
+                try {
+                    checkForDuplicateImage(DATA_URL);
+                } catch(Exception ex) {}
             }
         }
 
@@ -1194,7 +1200,10 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         // Clean up initial camera-written image file.
         (new File(FileHelper.stripFileProtocol(oldImage.toString()))).delete();
 
-        checkForDuplicateImage(imageType);
+        try {
+            checkForDuplicateImage(imageType);
+        } catch(Exception ex) {}
+        
         // Scan for the gallery to update pic refs in gallery
         if (this.saveToPhotoAlbum && newImage != null) {
             this.scanForGallery(newImage);
